@@ -8,7 +8,7 @@
 
 ## Оглавление :book:
 
-1. [Slices](#слайсы)
+1. [Slices](#slices)
 1. [Указатели](#указатели)
 1. [Goroutines и Channels](#goroutines-и-channels)
 1. [Работа со строками](#работа-со-строками)
