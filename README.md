@@ -117,7 +117,7 @@ mm.data = append(mm.data, allocated...)
 
 </details>
 
-### Вопрос 3: В какой момент рантайм решает запустить сборщик мусора?
+### Вопрос 4: В какой момент рантайм решает запустить сборщик мусора?
 
 <details>
   <summary>Ответ</summary>
@@ -154,7 +154,7 @@ mm.data = append(mm.data, allocated...)
 
 </details>
 
-### Вопрос 3: Какие недостатки есть у подхода Mark-and-Sweep?
+### Вопрос 5: Какие недостатки есть у подхода Mark-and-Sweep?
 
 <details>
   <summary>Ответ</summary>
@@ -168,7 +168,7 @@ mm.data = append(mm.data, allocated...)
 Определение, какие объекты являются корневыми, может быть сложным и требовать дополнительной информации от компилятора или рантайма, что увеличивает сложность системы.
 </details>
 
-### Вопрос 3: Вопросы которые касаются отладки приложения и могут принимать разную форму:
+### Вопрос 6: Вопросы которые касаются отладки приложения и могут принимать разную форму:
 
 > Как вы интегрируете pprof в ваше приложение для сбора данных профилирования CPU и памяти?
 > Интеграция pprof: Ожидается, что кандидат знает, как интегрировать pprof в приложение и как собирать профили CPU и памяти.
@@ -273,7 +273,7 @@ top
 
 </details>
 
-### Вопрос 4: Что за параметры GOGC и GODEBUG, зачем они нужны и для чего?
+### Вопрос 7: Что за параметры GOGC и GODEBUG, зачем они нужны и для чего?
 
 <details>
   <summary>Ответ</summary>
@@ -331,6 +331,32 @@ func main() {
 ### Обратите внимание:
 
 Задание переменных окружения программно влияет только на текущий процесс и его дочерние процессы, и не будет иметь эффекта на другие процессы или на последующие запуски вашей программы.
+
+</details>
+
+### Вопрос 8: Что такое middleware и router в Golang?
+
+<details>
+  <summary>Ответ</summary>
+
+### Middleware
+
+**Middleware** is essentially a function that is called before or after your main request handler, depending on where you put it in the chain of function calls. It allows you to process the request and/or response to perform various tasks: logging, authentication, CORS headers setting, and so on.
+
+#### Analogy:
+
+Imagine a series of traffic checkpoints on a road leading to a destination (your main request handler). Each checkpoint (middleware) has a specific task. One might check for proper documentation (authentication), another might count the number of passengers in the car (logging), and yet another might ensure the car meets environmental standards (CORS headers, content type setting, etc.). If a car doesn't pass any of these checkpoints, it might be turned around and never reach the destination (an HTTP error response). But if it passes all of them, it's allowed to proceed to its destination (the main handler).
+
+### Router
+
+A **Router** in Go is responsible for directing incoming HTTP requests to their corresponding handler functions based on criteria like the request's URL and HTTP method (GET, POST, etc.).
+**For example**, if an SUV with a label "Fetch-Data" (a GET request to /data) approaches, the traffic cop directs it to a road specifically designed for fetching data. Similarly, if a truck labeled "Store-Items" (a POST request to /items) comes, it gets directed to a different road where items are stored.
+
+#### Analogy:
+
+A traffic cop (router) stands at an intersection and directs vehicles (HTTP requests) based on their type or destination. For instance, trucks (GET requests) might be directed to one road (endpoint handler), cars (POST requests) to another, and bicycles (PUT requests) to a bike path. If a vehicle (request) tries to go down a path that's not meant for it, the traffic cop stops it and tells it where to go or turns it around (sends an HTTP 404 Not Found response).
+
+In Golang, popular libraries like Gorilla Mux or Chi are often used to handle routing, and they also support middleware, allowing developers to chain together multiple functions for streamlined request processing.
 
 </details>
 
@@ -1014,7 +1040,7 @@ a()
 
 </details>
 
-### Вопрос 7: Что выведет этот код?
+### Вопр���� 7: Что выведет этот код?
 
 ```go
 s := "test"
@@ -1300,6 +1326,50 @@ ch <- 2
 </details>
 
 ## Работа со строками
+
+### Вопрос 1: Как бы вы конкатенировали большое количество строк эффективно, минимизируя накладные расходы связанные с выделением памяти?
+
+<details>
+  <summary>Ответ</summary>
+Вариант 1 - я бы использовал strings.Builder
+Вариант 2 - посчитал количество байт которое необходимо конкатенировать, командой make создал слайс рун, и с помощью команды append добавил необъодимые строки, 
+например так: concat = append(concat, []rune(str1), []rune(str2), []rune(str3))
+</details>
+
+### Вопрос 2: Каковы различия между `len` и `utf8.RuneCountInString` при работе со строками, и в каких ситуациях вы бы использовали один метод вместо другого?
+
+<details>
+  <summary>Ответ</summary>
+Различия состоят в том, что функция len возвращает количество байт, бывает так что некоторые символы занимают более одного байта, так например кириллические символы занимают два байта
+японские символы могут занимать и до 3 байт. RuneCountInString - возвращает количество рун в строке. Руна является алиасом для int32 и соответственно одна руна вмещает в себя до 4 байт информации.
+Это очень важно понимать когда мы хотим узнать количество символов в строке например, а не количество байт, которые они занимают.
+</details>
+
+### Вопрос 3: Как в Go осуществляется сравнение строк, и что нужно учитывать при сравнении строк в разных языках и кодировках?
+
+<details>
+  <summary>Ответ</summary>
+Можно воспользоваться функцией strings.Compare которая возвращает true или false в зависимости от схожести строк.
+Как я писал выше в зависимости от кодироки мы получаем соответствующее количество байт, которые занимают данные символы.
+Может случится так что str1 := "ab", a str2:= "ф" при этом len(str1) = 2 и len(str2) = 2, но при этом строки не равны между собой и сравнивать по длине их некорректно.
+</details>
+
+### Вопрос 4: Расскажите, как вы бы извлекли подстроку из строки в Go. Как бы вы обработали строки, содержащие многобайтовые символы, такие как руны Unicode?
+
+<details>
+  <summary>Ответ</summary>
+Можно воспользоваться функцией strings.Substring, которая вернет нужный нам результат.
+Можно воспользоваться вариантом преобразования строки в слайс рун и с помощью срезов получить нужную нам подстроку.
+</details>
+
+### Вопрос 5: Объясните, как в Go преобразовать строку в число и число в строку, и как обрабатывать возможные ошибки при этих преобразованиях?
+
+<details>
+  <summary>Ответ</summary>
+На ум приходит функция Atoi и функция Itoa, которые преобразовывают строку в число и число в строку соответственно.
+</details>
+
+### Бонусный Вопрос: Как бы вы обрабатывали и изменяли строки для создания эффективного и безопасного веб-сервера, который может обрабатывать входные данные от пользователя и предотвращать атаки, такие как XSS и SQL инъекции?
 
 ## Вклад :heart:
 
