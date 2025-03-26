@@ -1,4 +1,4 @@
-`go
+```go
 package main
 
 import (
@@ -43,4 +43,4 @@ func fetchURL(url string) error {
 	_, err := http.Get(url)
 	return err
 }
-`
+```
