@@ -2362,7 +2362,7 @@ err = tmpl.Execute(w, data)
 - по возможности указать corner cases.
 
 ---
-[![Star History Chart](https://api.star-history.com/svg?repos=ТВОЙ_ЮЗЕР/ТВОЙ_РЕПО&type=Date)](https://star-history.com/#ТВОЙ_ЮЗЕР/ТВОЙ_РЕПО&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=yakomisar/golang-questions&type=Date)](https://star-history.com/#yakomisar/golang-questions&Date)
 
 ---
 
